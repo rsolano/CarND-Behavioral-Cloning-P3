@@ -50,7 +50,7 @@ The clone.py file contains the code for training and saving the convolution neur
 
 My model consists of a convolution neural network with 5x5 filter sizes and depths between 24 and 64 (clone.py lines 76-87) 
 
-The image pixel data is normalized and mean centered in the model using a Keras lambda layer (code line 77). Input images are cropped 70 pixes from the top and 20 from the bottom in order to eliminate unnecessary details that could potentially distract the model. This is achieved via a Keras Cropping2D layer.
+The image pixel data is normalized and mean centered in the model using a Keras lambda layer (code line 77). Input images are cropped 70 pixels from the top and 20 from the bottom in order to eliminate unnecessary details that could potentially distract the model. This is achieved via a Keras Cropping2D layer.
 
 #### 2. Attempts to reduce overfitting in the model
 
@@ -70,7 +70,7 @@ For details about how I created the training data, see the next section.
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to create data sets and experimenting with various models. I started with the simplest network, a flattened image connected to a single output, to check everything was working. Obviously no amount of data would make this model drive correctly so I moved on to a LeNet architecture. LeNet did much better and I was able to get the car to drive itself past the brigde. However it would not get past the second curve and veer off into the dirt, regardless of the amount of data that I fed the model with. I created data sets by driving on the center lane and focusing getting through curves as smoothly as possible. I also recorded center recoveries from both sides of the road and different points of the circuit, emphasizing problem areas such as the bridge and the second curve. I also recorded clockwise and counter-clockwise driving to help the mode better generalize the track.
+The overall strategy for deriving a model architecture was to create data sets and experimenting with various models. I started with the simplest network, a flattened image connected to a single output, to check everything was working. Obviously no amount of data would make this model drive correctly so I moved on to a LeNet architecture. LeNet did much better and I was able to get the car to drive itself past the bridge. However it would not get past the second curve and veer off into the dirt, regardless of the amount of data that I fed the model with. I created data sets by driving on the center lane and focusing getting through curves as smoothly as possible. I also recorded center recoveries from both sides of the road and different points of the circuit, emphasizing problem areas such as the bridge and the second curve. I also recorded clockwise and counter-clockwise driving to help the mode better generalize the track.
 
 To help with training performance I wrote a generator function. The generator create and yields data on the fly with a batch size of 32. This greatly improved my ability to test out different data sets and models, even without a GPU.
 
