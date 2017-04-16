@@ -14,11 +14,11 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./examples/placeholder.png "Model Visualization"
-[image2]: ./examples/placeholder.png "Grayscaling"
-[image3]: ./examples/placeholder_small.png "Recovery Image"
-[image4]: ./examples/placeholder_small.png "Recovery Image"
-[image5]: ./examples/placeholder_small.png "Recovery Image"
+[image1]: ./examples/cnn-architecture.png "Model Visualization"
+[image2]: ./examples/center_2017_04_14_18_30_03_056.jpg "Center lane driving"
+[image3]: ./examples/center_2017_04_14_15_57_08_553.jpg "Recovery Image"
+[image4]: ./examples/center_2017_04_14_15_57_08_787.jpg "Recovery Image"
+[image5]: ./examples/center_2017_04_14_15_57_08_949.jpg "Recovery Image"
 [image6]: ./examples/placeholder_small.png "Normal Image"
 [image7]: ./examples/placeholder_small.png "Flipped Image"
 
@@ -44,29 +44,27 @@ python drive.py model.h5
 
 #### 3. Submission code is usable and readable
 
-The clone.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works. //TODO
+The clone.py file contains the code for training and saving the convolution neural network. The file shows the pipeline I used for training and validating the model, and it contains comments to explain how the code works.
 
 ### Model Architecture and Training Strategy
 
-####1. An appropriate model architecture has been employed
+#### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 5x5 filter sizes and depths between 24 and 64 (clone.py lines 66-78) 
+My model consists of a convolution neural network with 5x5 filter sizes and depths between 24 and 64 (clone.py lines 76-87) 
 
-The data is normalized in the model using a Keras lambda layer (code line 67). Input images are cropped 70 pixes from and 20 from the bottom to center the image on the road and eliminate unnecessary details. This is achieved via a Keras Cropping2D layer.
+The image pixel data is normalized and mean centered in the model using a Keras lambda layer (code line 77). Input images are cropped 70 pixes from the top and 20 from the bottom in order to eliminate unnecessary details that could potentially distract the model. This is achieved via a Keras Cropping2D layer.
 
 ####2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (clone.py lines 21). 
-
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 102). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (clone.py line 78).
+The model used an adam optimizer, so the learning rate was not tuned manually (clone.py line 93).
 
 #### 4. Appropriate training data
 
-I generated a number of data sets in order to train the model. I used a combination of center lane driving, recovering from the left and right sides of the road back to the center, especially in problem areas such as the first curve, the bridge and second curve.
+I generated a number of data sets in order to train the model. I used a combination of center lane driving, recovering from the left and right sides of the road back to the center.
 
 For details about how I created the training data, see the next section. 
 
@@ -74,19 +72,9 @@ For details about how I created the training data, see the next section.
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+The overall strategy for deriving a model architecture was to create data sets and experimenting with various models. I started with a flattened image connected to a single output to check everything was working. Obviously no amount of data would make this model drive correctly so I moved on to a LeNet architecture. LeNet did much better and I was able to get the car to drive itself past the brigde. However it would not get past the second curve and veer off into the dirt, regardless of the amount or quality of data that I fed the model with. I created data sets by driving on the center lane and focusing getting through curves as smoothly as possible. I also recorded center recoveries from both sides of the road and different points of the circuit, emphasizing problem areas such as the bridge and the second curve. I also recorded clockwise and counter-clockwise driving to help the mode better generalize.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
-
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
+At the end of the process, the vehicle was able to drive autonomously around track 1 without leaving the road.
 
 #### 2. Final Model Architecture
 
