@@ -19,8 +19,6 @@ The goals / steps of this project are the following:
 [image3]: ./examples/center_2017_04_14_15_57_08_553.jpg "Recovery Image"
 [image4]: ./examples/center_2017_04_14_15_57_08_787.jpg "Recovery Image"
 [image5]: ./examples/center_2017_04_14_15_57_08_949.jpg "Recovery Image"
-[image6]: ./examples/placeholder_small.png "Normal Image"
-[image7]: ./examples/placeholder_small.png "Flipped Image"
 
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
@@ -54,7 +52,7 @@ My model consists of a convolution neural network with 5x5 filter sizes and dept
 
 The image pixel data is normalized and mean centered in the model using a Keras lambda layer (code line 77). Input images are cropped 70 pixes from the top and 20 from the bottom in order to eliminate unnecessary details that could potentially distract the model. This is achieved via a Keras Cropping2D layer.
 
-####2. Attempts to reduce overfitting in the model
+#### 2. Attempts to reduce overfitting in the model
 
 The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 102). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
@@ -64,7 +62,7 @@ The model used an adam optimizer, so the learning rate was not tuned manually (c
 
 #### 4. Appropriate training data
 
-I generated a number of data sets in order to train the model. I used a combination of center lane driving, recovering from the left and right sides of the road back to the center.
+I generated approximately 7 different data sets in order to train the model. I used a combination of center lane driving, recovering from the left and right sides of the road back to the center, and driving in both directions.
 
 For details about how I created the training data, see the next section. 
 
@@ -72,13 +70,15 @@ For details about how I created the training data, see the next section.
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to create data sets and experimenting with various models. I started with a flattened image connected to a single output to check everything was working. Obviously no amount of data would make this model drive correctly so I moved on to a LeNet architecture. LeNet did much better and I was able to get the car to drive itself past the brigde. However it would not get past the second curve and veer off into the dirt, regardless of the amount or quality of data that I fed the model with. I created data sets by driving on the center lane and focusing getting through curves as smoothly as possible. I also recorded center recoveries from both sides of the road and different points of the circuit, emphasizing problem areas such as the bridge and the second curve. I also recorded clockwise and counter-clockwise driving to help the mode better generalize.
+The overall strategy for deriving a model architecture was to create data sets and experimenting with various models. I started with the simplest network, a flattened image connected to a single output, to check everything was working. Obviously no amount of data would make this model drive correctly so I moved on to a LeNet architecture. LeNet did much better and I was able to get the car to drive itself past the brigde. However it would not get past the second curve and veer off into the dirt, regardless of the amount of data that I fed the model with. I created data sets by driving on the center lane and focusing getting through curves as smoothly as possible. I also recorded center recoveries from both sides of the road and different points of the circuit, emphasizing problem areas such as the bridge and the second curve. I also recorded clockwise and counter-clockwise driving to help the mode better generalize the track.
 
-At the end of the process, the vehicle was able to drive autonomously around track 1 without leaving the road.
+To help with training performance I wrote a generator function. The generator create and yields data on the fly with a batch size of 32. This greatly improved my ability to test out different data sets and models, even without a GPU.
+
+Lastly I implemented Nvidia's network architecture which was designed for real self-driving vehicles. Given its complexity I anticipated training would be time consuming but that was not the case to my surprise. I first trained the model for 3 epochs and the car already drove better than all my previous attempts with LeNet, even using my smallest data set. After training for 5 epochs, the car was able to drive around the entire track without leaving the road.
 
 #### 2. Final Model Architecture
 
-For my final model I used Nvidia's architecture, a convolutional neural network which consists of the following layers and layer sizes: 
+My final model was based on Nvidia's architecture, a convolutional neural network which consists of the following layers and layer sizes: 
 
 | Layer | Description	| 
 |:-----:|:-----------:| 
@@ -98,30 +98,23 @@ Here is a visualization of the architecture (note: visualizing the architecture 
 
 ![alt text][image1]
 
-####3. Creation of the Training Set & Training Process
+#### 3. Creation of the Training Set & Training Process
 
 To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
 
 ![alt text][image2]
 
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
+I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn not to drive over the lane lanes and move back to the center instead.
+
+The images below show what a recovery looks like starting from the left side toward the center:
 
 ![alt text][image3]
 ![alt text][image4]
 ![alt text][image5]
 
-Then I repeated this process on track two in order to get more data points.
 
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
+To augment the data set, I flipped the images and angles in order to help the model generalize the track. Image flipping was done on the fly using the cv2.flip() function (lines, 47, 50 and 53) and not persisted to filesystem.
 
-![alt text][image6]
-![alt text][image7]
+My final training data set had 9300 data points after the collection process. I then preprocessed this data normalizing and mean centering pixel data and cropping each image. Data set is randomly shuffled with 20% of it put into the validation set. 
 
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5 as evidenced by a validation loss decrease up to that point and by the model's ability to correctly drive around the track.
