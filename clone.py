@@ -68,9 +68,10 @@ def generator(samples, batch_size=32):
 
 def nvidia_architecture():
     """
-    Nvidia architecture implementation using Keras. The model consists of 4
-    convolutions and 5 fully connected layers.
-    Preprocessing consists of image pixel normalization and cropping.
+    Network implementation using Keras based on the Nvidia architecture. This
+    model consists of 4 convolutions and 5 fully connected layers.
+    Preprocessing consists of image pixel normalization and mean centering as
+    well as image cropping.
     """
     model = Sequential()
     model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
