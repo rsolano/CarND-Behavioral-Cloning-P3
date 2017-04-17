@@ -48,17 +48,17 @@ The clone.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 5x5 filter sizes and depths between 24 and 64 (clone.py lines 76-87) 
+My model consists of a convolution neural network with 5x5 filter sizes and depths between 24 and 64 (clone.py lines 76-90) 
 
-The image pixel data is normalized and mean centered in the model using a Keras lambda layer (code line 77). Input images are cropped 70 pixels from the top and 20 from the bottom in order to eliminate unnecessary details that could potentially distract the model. This is achieved via a Keras Cropping2D layer.
+The image pixel data is normalized and mean centered in the model using a Keras lambda layer (code line 78). Input images are cropped 70 pixels from the top and 20 from the bottom in order to eliminate unnecessary details that could potentially distract the model. This is achieved via a Keras Cropping2D layer.
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 102). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The model was trained and validated on different data sets in order to check that the model was not overfitting (code line 105). In order to reduce overfitting, Dropout layers were introduced after each fully connected layer (code lines 85, 87, 89). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (clone.py line 93).
+The model used an adam optimizer, so the learning rate was not tuned manually (clone.py line 96).
 
 #### 4. Appropriate training data
 
@@ -70,11 +70,11 @@ For details about how I created the training data, see the next section.
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to create data sets and experimenting with various models. I started with the simplest network, a flattened image connected to a single output, to check everything was working. Obviously no amount of data would make this model drive correctly so I moved on to a LeNet architecture. LeNet did much better and I was able to get the car to drive itself past the bridge. However it would not get past the second curve and veer off into the dirt, regardless of the amount of data that I fed the model with. I created data sets by driving on the center lane and focusing getting through curves as smoothly as possible. I also recorded center recoveries from both sides of the road and different points of the circuit, emphasizing problem areas such as the bridge and the second curve. I also recorded clockwise and counter-clockwise driving to help the mode better generalize the track.
+The overall strategy for deriving a model architecture was to create data sets and experimenting with various models. I started with the simplest network, a flattened image connected to a single output, to check everything was working. Obviously no amount of data would make this model drive correctly so I moved on to a LeNet architecture (http://yann.lecun.com/exdb/lenet/). LeNet did much better and I was able to get the car to drive itself past the bridge. However it would not get past the second curve and veer off into the dirt, regardless of the amount of data that I fed the architecture with. I created data sets by driving on the center lane and focusing getting through curves as smoothly as possible. I also recorded center recoveries from both sides of the road and different points of the circuit, emphasizing problem areas such as the bridge and the second curve. I also recorded clockwise and counter-clockwise driving to help the mode better generalize the track.
 
 To help with training performance I wrote a generator function. The generator create and yields data on the fly with a batch size of 32. This greatly improved my ability to test out different data sets and models, even without a GPU.
 
-Lastly I implemented Nvidia's network architecture which was designed for real self-driving vehicles. Given its complexity I anticipated training would be time consuming but that was not the case to my surprise. I first trained the model for 3 epochs and the car already drove better than all my previous attempts with LeNet, even using my smallest data set. After training for 5 epochs, the car was able to drive around the entire track without leaving the road.
+Lastly I implemented Nvidia's network architecture (https://devblogs.nvidia.com/parallelforall/deep-learning-self-driving-cars/) which was designed for real self-driving vehicles. Given its complexity I anticipated training would be time consuming but that was not the case to my surprise. I first trained the model for 3 epochs and the car already drove better than all my previous attempts with LeNet, even using my smallest data set. After training for 5 epochs, the car was able to drive around the entire track without leaving the road.
 
 #### 2. Final Model Architecture
 
@@ -83,6 +83,8 @@ My final model was based on Nvidia's architecture, a convolutional neural networ
 | Layer | Description	| 
 |:-----:|:-----------:| 
 | Input | 320x160x3 RGB image |
+| Cropping | outputs 320x90x3 |
+| Normalization | normalize to 0-1 and mean center to 0-0.5 |
 | Convolution 5x5	|	outputs 66x200x24	|
 | Convolution 5x5	|	outputs 31x98x24	|
 | Convolution 5x5	|	outputs 14x47x36	|
@@ -90,13 +92,12 @@ My final model was based on Nvidia's architecture, a convolutional neural networ
 | Convolution 5x5	|	outputs 1x18x64	|
 | Flatten | outputs 1164 |
 |	Fully connected |	outputs 100 |
+|Dropout|
 |	Fully connected |	outputs 50 |
+|Dropout|
 |	Fully connected |	outputs 10 |
+|Dropout|
 |	Fully connected |	outputs 1 |
-
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
 
 #### 3. Creation of the Training Set & Training Process
 
